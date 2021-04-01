@@ -25,7 +25,7 @@ if __name__ == '__main__':
     valid_gen = DataGen(100, image_dir, mask_dir, image_height, image_width,2,mode = "Valid")
     
 #Model save checkpoint
-    filepath = r'/mnt/batch/tasks/shared/LS_root/mounts/clusters/pocdeepeastusriddhi3/code/Users/riddhi.chaudhuri/MaskTrack_Solution/models/model-ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5'        
+    filepath = r'C:/Users/RRay Cha/source/repos/MaskNet-Code/models/model-ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5'        
     checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
 
 #Build and Train Model
@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
     # save the losses figure and create a new figure for the accuracies
     plt.tight_layout()
-    plotPath =r'/mnt/batch/tasks/shared/LS_root/mounts/clusters/pocdeepeastusriddhi3/code/Users/riddhi.chaudhuri/MaskTrack_Solution/models/losses.png' #os.path.sep.join([config.PLOTS_PATH, "losses.png"])
+    plotPath =r'C:/Users/RRay Cha/source/repos/MaskNet-Code/models/losses.png' 
     plt.savefig(plotPath)
     plt.close()
 
@@ -73,5 +73,5 @@ if __name__ == '__main__':
 
     # save the accuracies plot
     plotPath=r'models/accs.png'
-        #r'/mnt/batch/tasks/shared/LS_root/mounts/clusters/pocdeepeastusriddhi3/code/Users/riddhi.chaudhuri/MaskTrack_Solution/models/accs.png' #os.path.sep.join([config.PLOTS_PATH, "accs.png"])
+        
     plt.savefig(plotPath)
