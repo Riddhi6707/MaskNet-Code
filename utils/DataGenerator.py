@@ -27,7 +27,7 @@ class DataGen(Sequence):
     def __len__(self):
               
 # The batch_count should be atleast equal to the number of the video classes. Preferably multiple times of the no of classes.
-        return  self.batch_count #if self.batch_count >= len(os.listdir(self.image_dir)) else len(os.listdir(self.image_dir))
+        return  self.batch_count if self.batch_count >= len(os.listdir(self.image_dir)) else len(os.listdir(self.image_dir))
 
     def __getitem__(self, idx):
         
