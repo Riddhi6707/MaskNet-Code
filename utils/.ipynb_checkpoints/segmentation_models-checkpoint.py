@@ -23,7 +23,7 @@ def build_model(image_size,  class_count=1, BACKBONE = 'resnet18'):
         
         model = Model(inputs=input_data, outputs=out_data)
         
-        loss = "binary_crossentropy" 
+        loss = sm.losses.JaccardLoss() +  sm.losses.BinaryFocalLoss()  #
 
         dice =  sm.metrics.IOUScore() 
         

@@ -1,5 +1,6 @@
 import config
-from DataGenerator import DataGen
+import utils
+from utils.DataGenerator import DataGen
 from tensorflow.python.keras.callbacks import  ModelCheckpoint
 from utils.segmentation_models import build_model
 import numpy as np
@@ -8,6 +9,7 @@ import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
     
+# Hyper parameters from config file
 
     batch_size = config.batch_size    
     batch_count = config.batch_count    
@@ -16,16 +18,23 @@ if __name__ == '__main__':
     image_height = config.image_height    
     image_width = config.image_width    
     nepochs = config.epochs_no
-    
+
+#DataGenerator class instantiation for training and validation
+
     train_gen = DataGen(batch_count, image_dir, mask_dir, image_height, image_width,batch_size,mode = "Train")    
-    valid_gen = DataGen(batch_count, image_dir, mask_dir, image_height, image_width,batch_size,mode = "Valid")
+    valid_gen = DataGen(100, image_dir, mask_dir, image_height, image_width,2,mode = "Valid")
     
-    filepath = r'C:\Users\RRay Cha\Desktop\WORK\Coding_Challenge\MaskTrack_Solution\models\model-ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5'        
+#Model save checkpoint
+    filepath = r'/mnt/batch/tasks/shared/LS_root/mounts/clusters/pocdeepeastusriddhi3/code/Users/riddhi.chaudhuri/MaskTrack_Solution/models/model-ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5'        
     checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
-    
-    model = build_model([image_height,image_width],  class_count=1, channels=16,BACKBONE = 'resnet34')
+
+#Build and Train Model
+    model = build_model((image_height,image_width))
+    model.summary()
     H = model.fit( train_gen ,batch_size=batch_size,callbacks=[checkpoint],
-	    epochs=nepochs, validation_data=valid_gen,verbose=1 )
+                  epochs=nepochs, validation_data=valid_gen,verbose=1 )
+    
+#Generate the training logs
     
     print(H.history.keys())
     lossNames = ["loss","loss"]
@@ -46,16 +55,16 @@ if __name__ == '__main__':
 
     # save the losses figure and create a new figure for the accuracies
     plt.tight_layout()
-    plotPath =r'C:\Users\RRay Cha\Desktop\WORK\Coding_Challenge\MaskTrack_Solution\models\losses.png' #os.path.sep.join([config.PLOTS_PATH, "losses.png"])
+    plotPath =r'/mnt/batch/tasks/shared/LS_root/mounts/clusters/pocdeepeastusriddhi3/code/Users/riddhi.chaudhuri/MaskTrack_Solution/models/losses.png' #os.path.sep.join([config.PLOTS_PATH, "losses.png"])
     plt.savefig(plotPath)
     plt.close()
 
     # create a new figure for the accuracies
     plt.style.use("ggplot")
     plt.figure()
-    plt.plot(N, H.history["mse"],
+    plt.plot(N, H.history["iou_score"],
         label="detection_train_acc")
-    plt.plot(N, H.history["val_mse"],
+    plt.plot(N, H.history["val_iou_score"],
         label="val_detection_acc")
     plt.title("Model Accuracy")
     plt.xlabel("Epoch #")
@@ -63,5 +72,6 @@ if __name__ == '__main__':
     plt.legend(loc="lower left")
 
     # save the accuracies plot
-    plotPath =r'C:\Users\RRay Cha\Desktop\WORK\Coding_Challenge\MaskTrack_Solution\models\accs.png' #os.path.sep.join([config.PLOTS_PATH, "accs.png"])
+    plotPath=r'models/accs.png'
+        #r'/mnt/batch/tasks/shared/LS_root/mounts/clusters/pocdeepeastusriddhi3/code/Users/riddhi.chaudhuri/MaskTrack_Solution/models/accs.png' #os.path.sep.join([config.PLOTS_PATH, "accs.png"])
     plt.savefig(plotPath)
