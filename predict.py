@@ -28,8 +28,9 @@ if __name__ == '__main__':
     test_vid = config.test_dir
     test_mask = config.test_mask_dir
     mode = config.mode
+    Results = config.result_path
     
-    filename = r'models_Dense_1000_1/model-ep990-loss0.000-val_loss0.000.h5'
+    filename = r'models/model-ep990-loss0.000-val_loss0.000.h5'
        #filename = r".\models_1000_1\model- ep001-loss0.051-val_loss0.051.h5"
     model = load_model(filename)
     
@@ -64,9 +65,27 @@ if __name__ == '__main__':
             
             new = np.dstack((im, im_label))
             
+            gt_label_path = os.path.join(test_mask,frame_ids[i])
+            gt_label_path = os.path.splitext(label_path)[0]
+            gt_label_path = gt_label_path + ".png"
+            gt_label_org = cv2.imread(gt_label_path)
+            gt_label_org.resize((image_height,image_width,gt_label_org.shape[2]))
+            gt_label = cv2.cvtColor(label_org, cv2.COLOR_BGR2GRAY)   
+            k = (np.unique(gt_label.flatten()))[0]
+            _,gt_im_label = cv2.threshold(gt_label,(k+10),255,cv2.THRESH_BINARY) 
+            gt_im_label = np.array(gt_im_label,dtype = "float32")/255.0 
+            
             if mode == 'offline':
                 
                 pred = model.predict(new)
+                finalPred = (pred>0.5).astype(np.unit8)
+                path = os.path.join(Results, test_class) + "\off" + str(i) + ".png"
+                cv2.imwrite(path,np.squeeze(finalPred))
+                
+                evalResult = model.evaluate(finalPred,gt_im_label,batch_size = 1)
+                print("acc :", evalResult[1])
+                
+            
                 
             elif mode == 'online':
                 
