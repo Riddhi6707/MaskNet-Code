@@ -6,3 +6,7 @@
 
 2.04.2021 = Online Train & Prediction + 1st Offline Train Log.
             Offline Train in 1st attempt has not been good. Further adjustments underway.
+
+
+3.04.2021 = Project Description added. 
+            Training underway to ensure better performance
